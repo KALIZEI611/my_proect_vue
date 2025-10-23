@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted,reactive,ref, watch } from "vue";
 import axios from "axios";
-
 import Header from "./components/Header.vue";
 import CardList from "./components/CardList.vue";
 import Drawer from "./components/Drawer.vue";
@@ -18,7 +17,31 @@ const onChangeSelect = (e)=>{
 }
 
 const onChangeSearchInput=(e)=>{
-  filters.searchQuery=e.target.value
+  filters.searchQuery=e.target.value;
+}
+
+const addTofavorite = async (item) =>{
+item.isFavorite=true;
+}
+
+const fetchFavorites=async()=>{
+  try{
+    const {data:favorites} = await axios.get("https://5c4f68a7b58c636d.mokky.dev/favorites"); 
+    items.value=items.value.map((item)=>{
+      const favorite = favorites.find((favorite)=>favorite.parentId===item.id);
+      if(!favorite){
+        return item
+      }
+      return{
+        ...item,
+        isFavorite:true,
+        favoritesId:favorite.id
+      }
+    });
+  }
+  catch (e){
+    console.log(e);
+  }
 }
 
 const fetchItems = async () => {
@@ -30,14 +53,21 @@ const fetchItems = async () => {
       params.title = `*${filters.searchQuery}*`;
     }
     const {data} = await axios.get("https://5c4f68a7b58c636d.mokky.dev/items",{params});
-    items.value=data;
+    items.value=data.map((obj) => ({
+      ...obj,
+      isFavorite:false,
+      isAdded:false,
+    }));
   }
   catch (e){
     console.log(e);
   }
 }
 
-onMounted(fetchItems);
+onMounted(async()=>{
+  await fetchItems();
+  await fetchFavorites();
+});
 watch(filters,fetchItems);
 
 </script>
