@@ -45,15 +45,22 @@ const addToFavorite = async (item) =>{
     console.log(e);
   }
 }
-const addToCart=(item)=>{
+const onClickAddPlus=(item)=>{
   if(!item.isAdded){
-    cart.value.push(item)
-    item.isAdded=true
+    addToCart(item)
   }else{
-    cart.value.splice(cart.value.indexOf(item),1)
-    item.isAdded=false
+    removeFromCart(item)
   }
 }
+const addToCart=(item)=>{
+  cart.value.push(item)
+  item.isAdded=true
+}
+const removeFromCart=(item)=>{
+  cart.value.splice(cart.value.indexOf(item),1)
+  item.isAdded=false
+}
+
 const fetchFavorites=async()=>{
   try{
     const {data:favorites} = await axios.get("https://5c4f68a7b58c636d.mokky.dev/favorites"); 
@@ -101,7 +108,9 @@ watch(filters,fetchItems);
 provide('cart',{
   cart,
   closeDrawer,
-  openDrawer
+  openDrawer,
+  addToCart,
+  removeFromCart
 });
 </script>
 
@@ -132,7 +141,7 @@ provide('cart',{
         </div>
       </div>
       <div class="mt-10"> 
-        <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="addToCart"/>
+        <CardList :items="items" @add-to-favorite="addToFavorite" @add-to-cart="onClickAddPlus"/>
       </div>
     </div>
     
