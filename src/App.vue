@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted,provide,reactive,ref, watch } from "vue";
+import { computed, onMounted,provide,reactive,ref, watch } from "vue";
 import axios from "axios";
 import Header from "./components/Header.vue";
 import CardList from "./components/CardList.vue";
@@ -7,8 +7,13 @@ import Drawer from "./components/Drawer.vue";
 
 const items = ref([]);
 const cart = ref([]);
-
 const drawerOpen = ref(false);
+
+const totalPrice=computed(
+  ()=>cart.value.reduce((acc,item)=>acc+item.price,0)
+)
+const vatPrice=computed(()=>Math.round((totalPrice.value*5)/100))
+
 const closeDrawer = () =>{
   drawerOpen.value=false;
 };
@@ -60,7 +65,6 @@ const removeFromCart=(item)=>{
   cart.value.splice(cart.value.indexOf(item),1)
   item.isAdded=false
 }
-
 const fetchFavorites=async()=>{
   try{
     const {data:favorites} = await axios.get("https://5c4f68a7b58c636d.mokky.dev/favorites"); 
@@ -100,6 +104,19 @@ const fetchItems = async () => {
     console.log(e);
   }
 }
+const createOrder = async()=>{
+  try{
+    const {data} = await axios.post("https://5c4f68a7b58c636d.mokky.dev/orders",{
+      items:cart.value,
+      totalPrice:totalPrice.value,
+    })
+    cart.value=[]
+    return data
+  }
+  catch (e){
+    console.log(e);
+  }
+}
 onMounted(async()=>{
   await fetchItems();
   await fetchFavorites();
@@ -115,9 +132,9 @@ provide('cart',{
 </script>
 
 <template>
-  <Drawer v-if="drawerOpen"/>
-  <div class="bg-white w-4/5 m-auto  rounded-xl shadow-xl mt-14">
-    <Header @open-drawer="openDrawer"/>
+  <Drawer v-if="drawerOpen" :totalPrice="totalPrice" :vatPrice="vatPrice" @create-order="createOrder"/>
+  <div class="bg-white w-4/5 m-auto  rounded-xl shadow-xl mt-14"> 
+    <Header :total-price="totalPrice" @open-drawer="openDrawer"/>
     <div class="p-10">
       <div class="flex justify-between items-center mb-10">
         <h1 class="text-3xl font-bold">Все кроссовки</h1>
