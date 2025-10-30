@@ -1,4 +1,5 @@
-<script setup>defineProps({
+<script setup>
+defineProps({
     id:Number,
     imgUrl:String,
     title:String,
