@@ -43,6 +43,7 @@ const addToFavorite = async (item) => {
     if (!item.isFavorite) {
       const obj = {
         parentId: item.id,
+        nameSneakers:item.title
       };
       item.isFavorite = true;
       const { data } = await axios.post(

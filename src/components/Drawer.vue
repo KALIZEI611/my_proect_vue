@@ -29,13 +29,13 @@ defineProps({
         <div class="flex gap-2">
           <span>Итого:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <span class="font-bold">{{ totalPrice }} руб.</span>
+          <span class="font-bold">{{ totalPrice.toLocaleString('ru-RU') }} руб.</span>
         </div>
 
         <div class="flex gap-2">
           <span>Налог 5%:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <span class="font-bold">{{ vatPrice }} руб.</span>
+          <span class="font-bold">{{ vatPrice.toLocaleString('ru-RU') }} руб.</span>
         </div>
 
         <button
