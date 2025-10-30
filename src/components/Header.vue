@@ -22,7 +22,7 @@ const emit = defineEmits(["openDrawer"]);
         class="flex items-center cursor-pointer gap-3 text-gray-500 hover:text-black"
       >
         <img src="/cart.svg" alt="Cart" />
-        <b>{{ totalPrice }} руб.</b>
+        <b>{{ totalPrice.toLocaleString('ru-RU') }} руб.</b>
       </li>
       <li
         class="flex items-center cursor-pointer gap-3 text-gray-500 hover:text-black"
